@@ -126,6 +126,17 @@ type MasterConfiguration struct {
 	FeatureGates map[string]bool
 }
 
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// MasterNodeConfiguration is the configuration for a specific master node.
+type MasterNodeConfiguration struct {
+	metav1.TypeMeta
+
+	// NodeName is the name of a node that will host the k8s control plane.
+	// Defaults to the hostname if not provided.
+	NodeName string
+}
+
 // API struct contains elements of API server address.
 type API struct {
 	// AdvertiseAddress sets the IP address for the API server to advertise.
