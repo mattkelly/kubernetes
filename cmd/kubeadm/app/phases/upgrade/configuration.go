@@ -30,6 +30,7 @@ import (
 	"k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/validation"
 	"k8s.io/kubernetes/cmd/kubeadm/app/constants"
 	configutil "k8s.io/kubernetes/cmd/kubeadm/app/util/config"
+	kubeadmconfig "k8s.io/kubernetes/cmd/kubeadm/app/util/config"
 	"k8s.io/kubernetes/pkg/api/legacyscheme"
 )
 
@@ -92,6 +93,17 @@ func loadConfigurationBytes(client clientset.Interface, w io.Writer, cfgPath str
 	} else if err != nil {
 		return []byte{}, fmt.Errorf("an unexpected error happened when trying to get the ConfigMap %q in the %s namespace: %v", constants.MasterConfigurationConfigMap, metav1.NamespaceSystem, err)
 	}
+
+	nodeConfigMapName, err := kubeadmconfig.GetMasterNodeConfigMapName()
+	if err != nil {
+		return []byte{}, err
+	}
+
+	nodeConfigMap, err := client.CoreV1().ConfigMaps(metav1.NamespaceSystem).Get(nodeConfigMapName, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+	}
+
+	fmt.Printf("%v\n", nodeConfigMap)
 
 	fmt.Printf("[upgrade/config] FYI: You can look at this config file with 'kubectl -n %s get cm %s -oyaml'\n", metav1.NamespaceSystem, constants.MasterConfigurationConfigMap)
 	return []byte(configMap.Data[constants.MasterConfigurationConfigMapKey]), nil

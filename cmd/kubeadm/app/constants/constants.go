@@ -191,6 +191,17 @@ const (
 	// MasterConfigurationConfigMapKey specifies in what ConfigMap key the master configuration should be stored
 	MasterConfigurationConfigMapKey = "MasterConfiguration"
 
+	// MasterNodeConfigurationConfigMapPrefix specifies the prefix for the
+	// ConfigMap in the kube-system namespace the `kubeadm init` configuration
+	// for a particular master should be stored. The suffix will be a UID
+	// identifying the particular node.
+	MasterNodeConfigurationConfigMapPrefix = "kubeadm-config-"
+
+	// MasterNodeConfigurationConfigMapKeyPrefix specifies the prefix for what
+	// ConfigMap key the master configuration for a particular master should be
+	// stored.
+	MasterNodeConfigurationConfigMapKey = "MasterNodeConfiguration"
+
 	// KubeletBaseConfigurationConfigMap specifies in what ConfigMap in the kube-system namespace the initial remote configuration of kubelet should be stored
 	KubeletBaseConfigurationConfigMap = "kubelet-base-config-1.9"
 

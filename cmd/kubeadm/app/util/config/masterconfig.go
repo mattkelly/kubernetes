@@ -20,6 +20,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
+	"strings"
+
+	"github.com/google/cadvisor/utils/sysfs"
+	"github.com/google/cadvisor/utils/sysinfo"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	netutil "k8s.io/apimachinery/pkg/util/net"
@@ -140,4 +144,17 @@ func NormalizeKubernetesVersion(cfg *kubeadmapi.MasterConfiguration) error {
 		return fmt.Errorf("this version of kubeadm only supports deploying clusters with the control plane version >= %s. Current version: %s", kubeadmconstants.MinimumControlPlaneVersion.String(), cfg.KubernetesVersion)
 	}
 	return nil
+}
+
+// GetMasterNodeConfigMapName returns the name of the master
+// node-specific ConfigMap belonging to this node, or an error if
+// required machine info cannot be retrieved
+func GetMasterNodeConfigMapName() (string, error) {
+	fs := sysfs.NewRealSysFs()
+	systemUUID, err := sysinfo.GetSystemUUID(fs)
+	if err != nil {
+		return "", err
+	}
+
+	return kubeadmconstants.MasterNodeConfigurationConfigMapPrefix + strings.ToLower(systemUUID), nil
 }
